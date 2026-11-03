@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="420" viewBox="0 0 520 420" fill="none">
+  <defs>
+    <radialGradient id="rose" cx="45%" cy="42%" r="62%"><stop stop-color="#FFDDE7"/><stop offset=".52" stop-color="#EB7FA2"/><stop offset="1" stop-color="#A7195B"/></radialGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#789253"/><stop offset="1" stop-color="#2F5B3F"/></linearGradient>
+    <linearGradient id="lily" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF4F3"/><stop offset="1" stop-color="#F39CB5"/></linearGradient>
+  </defs>
+  <g opacity=".98">
+    <path d="M14 397C132 342 174 252 216 119" stroke="#647949" stroke-width="8" stroke-linecap="round"/>
+    <path d="M111 343C144 296 198 280 252 291C211 327 162 339 111 343Z" fill="url(#leaf)"/>
+    <path d="M159 241C119 213 97 172 104 125C145 151 166 189 159 241Z" fill="url(#leaf)"/>
+    <path d="M191 179C226 138 271 124 317 136C288 174 245 190 191 179Z" fill="url(#leaf)"/>
+    <g transform="translate(65 243)">
+      <ellipse cx="69" cy="63" rx="52" ry="25" fill="url(#rose)" transform="rotate(-18 69 63)"/>
+      <ellipse cx="68" cy="61" rx="25" ry="54" fill="url(#rose)" transform="rotate(12 68 61)"/>
+      <ellipse cx="69" cy="62" rx="34" ry="23" fill="#BD2C68" transform="rotate(34 69 62)"/>
+      <circle cx="69" cy="61" r="13" fill="#8B164D"/>
+    </g>
+    <g transform="translate(186 66)">
+      <path d="M66 72C25 78 4 42 20 8C50 17 70 38 66 72Z" fill="url(#lily)"/>
+      <path d="M67 72C65 28 98 10 130 23C122 54 98 72 67 72Z" fill="url(#lily)"/>
+      <path d="M67 73C96 84 102 119 79 139C52 124 48 99 67 73Z" fill="url(#lily)"/>
+      <path d="M65 72C40 101 5 91 0 62C21 45 47 48 65 72Z" fill="url(#lily)"/>
+      <circle cx="66" cy="72" r="12" fill="#C99031"/>
+      <path d="M66 72L47 35M66 72L96 45M66 72L92 100" stroke="#A65E6F" stroke-width="3"/>
+    </g>
+    <g transform="translate(9 77) scale(.72)">
+      <ellipse cx="69" cy="63" rx="52" ry="25" fill="url(#rose)" transform="rotate(-18 69 63)"/>
+      <ellipse cx="68" cy="61" rx="25" ry="54" fill="url(#rose)" transform="rotate(12 68 61)"/>
+      <circle cx="69" cy="61" r="18" fill="#A61957"/>
+    </g>
+  </g>
+</svg>

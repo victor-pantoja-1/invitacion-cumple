@@ -1,0 +1,233 @@
+<main class="invitation" [class.envelope-opened]="opened()">
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="petals" aria-hidden="true">
+    @for (petal of petals; track trackPetal($index)) {
+      <i [style.--petal-index]="$index"></i>
+    }
+  </div>
+
+  <header class="topbar">
+    <button class="monogram" type="button" (click)="goTo(0)" aria-label="Volver al inicio">♥</button>
+    <div class="top-actions">
+      <button type="button" class="text-action" (click)="skipStory()">Ver detalles</button>
+      @if (event().musicUrl) {
+        <button type="button" class="round-action" (click)="toggleMusic()" [attr.aria-label]="musicPlaying() ? 'Silenciar música' : 'Activar música'">
+          {{ musicPlaying() ? '♫' : '♪' }}
+        </button>
+      }
+      <button type="button" class="round-action" (click)="share()" aria-label="Compartir invitación">↗</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <section class="loading-screen" aria-live="polite">
+      <span class="loader-heart">♥</span>
+      <p>Preparando algo especial…</p>
+    </section>
+  } @else if (invalidLink()) {
+    <section class="state-card invalid-card">
+      <span class="state-icon">♡</span>
+      <p class="eyebrow">ENLACE NO DISPONIBLE</p>
+      <h1>Esta invitación no es válida</h1>
+      <p>Puede que el enlace esté incompleto, haya caducado o la invitación haya sido revocada.</p>
+      <a class="primary-button" href="/">Abrir invitación general</a>
+    </section>
+  } @else {
+    <nav class="story-progress" aria-label="Progreso de la invitación">
+      @for (step of [0, 1, 2, 3, 4, 5]; track step) {
+        <button type="button" [class.active]="step === scene()" [class.passed]="step < scene()" (click)="goTo(step)" [attr.aria-label]="'Ir a la escena ' + (step + 1)"></button>
+      }
+      <span>0{{ scene() + 1 }} / 06</span>
+    </nav>
+
+    @if (notice()) {
+      <div class="notice" role="status">
+        <span>i</span><p>{{ notice() }}</p><button type="button" (click)="notice.set('')" aria-label="Cerrar mensaje">×</button>
+      </div>
+    }
+
+    @switch (scene()) {
+      @case (0) {
+        <section class="scene cover-scene" aria-labelledby="cover-title">
+          <img class="flower flower-top" src="/assets/images/floral-corner.svg" alt="" width="520" height="420">
+          <div class="sparkles" aria-hidden="true">✦ · ✧ · ✦</div>
+          <div class="cover-copy">
+            <p class="eyebrow">UNA INVITACIÓN PARA TI</p>
+            <h1 id="cover-title">Hay momentos que merecen <em>celebrarse…</em></h1>
+            <span class="gold-swish" aria-hidden="true"></span>
+            <p>{{ event().narrative.openingDetail }}</p>
+          </div>
+
+          <div class="envelope-wrap" [class.is-open]="opened()" aria-hidden="true">
+            <div class="envelope-shadow"></div>
+            <div class="envelope-card"><span>Con mucho cariño</span><b>para ti</b></div>
+            <div class="envelope">
+              <div class="envelope-back"></div>
+              <div class="envelope-flap"></div>
+              <div class="envelope-front"></div>
+              <div class="wax-seal">♥</div>
+            </div>
+          </div>
+
+          <button class="primary-button opening-button" type="button" (click)="openInvitation()" [disabled]="opened()">
+            <span>{{ opened() ? 'Abriendo…' : 'Abrir invitación' }}</span><b aria-hidden="true">→</b>
+          </button>
+          <p class="hint">Toca para descubrir la sorpresa</p>
+        </section>
+      }
+      @case (1) {
+        <section class="scene story-scene" aria-labelledby="story-title">
+          <img class="flower flower-left" src="/assets/images/floral-corner.svg" alt="" width="520" height="420">
+          <div class="story-ornament" aria-hidden="true">♡</div>
+          <p class="eyebrow">UNA HISTORIA PARA RECORDAR</p>
+          <div class="story-copy">
+            <h1 id="story-title">{{ event().narrative.story[0] }}</h1>
+            <span class="gold-swish" aria-hidden="true"></span>
+            <p>{{ event().narrative.story[1] }}</p>
+          </div>
+          <div class="story-actions">
+            <button class="secondary-button" type="button" (click)="previous()">← Atrás</button>
+            <button class="primary-button" type="button" (click)="next()">Continuar <b>→</b></button>
+          </div>
+          <button class="skip-action" type="button" (click)="skipStory()">Saltar historia</button>
+        </section>
+      }
+      @case (2) {
+        <section class="scene portrait-scene" aria-labelledby="portrait-title">
+          <div class="portrait-layout">
+            <div class="portrait-wrap">
+              <div class="portrait-ring"></div>
+              @if (!portraitFailed()) {
+                <img [src]="event().photoUrl" (error)="onPortraitError()" alt="Fotografía de la cumpleañera" width="640" height="820">
+              } @else {
+                <div class="portrait-fallback"><span>♡</span><p>Fotografía no disponible</p></div>
+              }
+              <img class="portrait-flower" src="/assets/images/floral-corner.svg" alt="" width="520" height="420">
+            </div>
+            <div class="portrait-copy">
+              <p class="eyebrow">CON MUCHA ILUSIÓN</p>
+              <h1 id="portrait-title">¡Estás invitado(a) a mi <em>Cumpleaños!</em></h1>
+              <span class="gold-swish"></span>
+              <p>{{ event().narrative.invitation }}</p>
+              <blockquote>¡Tu presencia hará mi fiesta más especial!</blockquote>
+            </div>
+          </div>
+          <div class="story-actions">
+            <button class="secondary-button" type="button" (click)="previous()">← Atrás</button>
+            <button class="primary-button" type="button" (click)="next()">Descubrir el gran día <b>→</b></button>
+          </div>
+        </section>
+      }
+      @case (3) {
+        <section class="scene details-scene" aria-labelledby="details-title">
+          <img class="flower flower-details" src="/assets/images/floral-corner.svg" alt="" width="520" height="420">
+          <p class="eyebrow">RESERVA ESTA FECHA</p>
+          <h1 id="details-title">¡Nos vemos en mi <em>Cumpleaños!</em></h1>
+          <div class="detail-grid">
+            <article class="detail-card"><span class="detail-icon">▣</span><div><small>FECHA</small><strong>Viernes, 06 de noviembre</strong><p>de 2026</p></div></article>
+            <article class="detail-card"><span class="detail-icon">◷</span><div><small>HORA</small><strong>1:00 p. m.</strong><p>Hora de Lima</p></div></article>
+            <article class="detail-card location-card"><span class="detail-icon">⌖</span><div><small>DIRECCIÓN</small><strong>Urb. Villa Santa María</strong><p>Mz. L, lote 5 · Trujillo, Perú</p></div><button type="button" (click)="openMap()">Cómo llegar ↗</button></article>
+          </div>
+          <div class="countdown-card" aria-live="polite">
+            @if (!countdown().finished) {
+              <p><span>♡</span> Falta muy poco…</p>
+              <div class="countdown-units">
+                <div><strong>{{ countdown().days }}</strong><span>Días</span></div>
+                <div><strong>{{ countdown().hours.toString().padStart(2, '0') }}</strong><span>Horas</span></div>
+                <div><strong>{{ countdown().minutes.toString().padStart(2, '0') }}</strong><span>Min</span></div>
+                <div><strong>{{ countdown().seconds.toString().padStart(2, '0') }}</strong><span>Seg</span></div>
+              </div>
+            } @else {
+              <p class="event-day">¡El gran día ha llegado! ♡</p>
+            }
+          </div>
+          <div class="calendar-actions">
+            <button class="secondary-button" type="button" (click)="addToGoogleCalendar()">Google Calendar</button>
+            <button class="secondary-button" type="button" (click)="downloadCalendar()">Descargar .ics</button>
+          </div>
+          <div class="story-actions">
+            <button class="secondary-button" type="button" (click)="previous()">← Atrás</button>
+            <button class="primary-button" type="button" (click)="next()">Confirmar asistencia <b>→</b></button>
+          </div>
+        </section>
+      }
+      @case (4) {
+        <section class="scene rsvp-scene" aria-labelledby="rsvp-title">
+          <div class="rsvp-shell">
+            <div class="rsvp-heading">
+              <span class="mail-heart" aria-hidden="true">♡</span>
+              <p class="eyebrow">QUEREMOS CONTAR CONTIGO</p>
+              <h1 id="rsvp-title">Confirma tu <em>asistencia</em></h1>
+              <p>Tu respuesta nos ayudará a preparar cada detalle con mucho cariño.</p>
+            </div>
+            @if (!event().rsvpOpen) {
+              <div class="closed-state" role="status">Las confirmaciones están cerradas por el momento.</div>
+            } @else {
+              <form [formGroup]="rsvpForm" (ngSubmit)="submitRsvp()" novalidate>
+                <label class="field-label" for="guest-name">Nombre y apellido</label>
+                <input id="guest-name" type="text" formControlName="name" autocomplete="name" placeholder="Escribe tu nombre" [attr.aria-invalid]="rsvpForm.controls.name.invalid && rsvpForm.controls.name.touched">
+                @if (rsvpForm.controls.name.invalid && rsvpForm.controls.name.touched) {
+                  <p class="field-error">Escribe un nombre válido de al menos 2 caracteres.</p>
+                }
+
+                <fieldset>
+                  <legend>¿Podrás acompañarnos?</legend>
+                  <label class="choice-card" [class.selected]="rsvpForm.controls.attending.value === true">
+                    <input type="radio" formControlName="attending" [value]="true"><span class="choice-icon">✓</span><span><strong>Sí, asistiré</strong><small>¡Qué alegría contar contigo!</small></span>
+                  </label>
+                  <label class="choice-card" [class.selected]="rsvpForm.controls.attending.value === false">
+                    <input type="radio" formControlName="attending" [value]="false"><span class="choice-icon">×</span><span><strong>No podré asistir</strong><small>Gracias por hacérnoslo saber.</small></span>
+                  </label>
+                </fieldset>
+
+                @if (rsvpForm.controls.attending.value) {
+                  <label class="field-label" for="companions">Número de acompañantes</label>
+                  <select id="companions" formControlName="companions">
+                    @for (number of [0, 1, 2, 3, 4]; track number) {
+                      @if (number <= event().maxGuests) { <option [ngValue]="number">{{ number }}</option> }
+                    }
+                  </select>
+                }
+
+                <button class="primary-button submit-button" type="submit" [disabled]="saving()">
+                  @if (saving()) { <span class="button-loader"></span> Guardando respuesta… } @else { ♥ Confirmar mi asistencia }
+                </button>
+                <p class="privacy-note">🔒 Usaremos tus datos únicamente para organizar este evento.</p>
+              </form>
+            }
+          </div>
+          <button class="skip-action" type="button" (click)="previous()">← Volver a los detalles</button>
+        </section>
+      }
+      @case (5) {
+        <section class="scene success-scene" [class.declined]="rsvp()?.attending === false" aria-labelledby="success-title">
+          @if (rsvp()?.attending) {
+            <div class="celebration" aria-hidden="true">✦　♡　✧</div>
+            <span class="success-seal">✓</span>
+            <p class="eyebrow">ASISTENCIA CONFIRMADA</p>
+            <h1 id="success-title">¡Qué alegría, <em>{{ rsvp()?.name }}</em>!</h1>
+            <p>Tu asistencia está confirmada. Gracias por acompañarme en este día tan especial.</p>
+            <div class="people-pill">{{ totalPeople() }} {{ totalPeople() === 1 ? 'persona confirmada' : 'personas confirmadas' }} en tu invitación</div>
+          } @else {
+            <span class="success-seal declined-seal">♡</span>
+            <p class="eyebrow">RESPUESTA REGISTRADA</p>
+            <h1 id="success-title">Gracias por responder, <em>{{ rsvp()?.name }}</em></h1>
+            <p>Lamentamos que no puedas acompañarnos. Agradecemos mucho que nos lo hayas hecho saber.</p>
+          }
+          <article class="event-summary">
+            <div><small>VIERNES</small><strong>06</strong><span>NOV · 2026</span></div>
+            <p><strong>1:00 p. m.</strong><span>Urb. Villa Santa María<br>Trujillo, Perú</span></p>
+          </article>
+          <div class="success-actions">
+            <button class="primary-button" type="button" (click)="openMap()">Ver ubicación ↗</button>
+            <button class="secondary-button" type="button" (click)="downloadCalendar()">Guardar en calendario</button>
+            <button class="text-button" type="button" (click)="editRsvp()">Modificar mi respuesta</button>
+            <button class="text-button" type="button" (click)="goTo(0)">Volver a ver la historia</button>
+          </div>
+          <p class="remember-note">Esta invitación recuerda tu confirmación en este navegador.</p>
+        </section>
+      }
+    }
+  }
+</main>

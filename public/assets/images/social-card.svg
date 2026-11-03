@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FDE7EA"/><stop offset=".48" stop-color="#FFF8F3"/><stop offset="1" stop-color="#F3CAD5"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="14"/></filter></defs>
+  <rect width="1200" height="630" fill="url(#bg)"/><circle cx="180" cy="110" r="125" fill="#fff" opacity=".55" filter="url(#glow)"/><circle cx="1040" cy="540" r="155" fill="#E66C9C" opacity=".2" filter="url(#glow)"/>
+  <g fill="none" stroke="#C9953E" stroke-width="6" stroke-linecap="round"><path d="M513 180c-45-58-125 10 0 100 126-90 45-158 0-100Z"/><path d="M350 413c145 42 358 42 500 0"/></g>
+  <text x="600" y="350" fill="#981D59" text-anchor="middle" font-size="86" font-family="cursive">Una invitación especial</text>
+  <text x="600" y="458" fill="#4A1839" text-anchor="middle" font-size="32" font-family="serif">Hay momentos que merecen celebrarse…</text>
+  <g fill="#C84A7A" opacity=".75"><ellipse cx="120" cy="480" rx="70" ry="28" transform="rotate(-35 120 480)"/><ellipse cx="1080" cy="120" rx="70" ry="28" transform="rotate(35 1080 120)"/></g>
+</svg>

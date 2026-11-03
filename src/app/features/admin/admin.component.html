@@ -1,0 +1,88 @@
+<main class="admin-page">
+  @if (loading()) {
+    <section class="center-state"><span>♥</span><p>Cargando panel…</p></section>
+  } @else if (!signedIn()) {
+    <section class="login-layout">
+      <a href="/" class="back-link">← Volver a la invitación</a>
+      <div class="brand-panel">
+        <span class="brand-mark">♥</span>
+        <p>CELEBRACIÓN</p>
+        <h1>Cada detalle,<br><em>con mucho cariño</em></h1>
+        <p>Gestiona invitaciones y respuestas desde un espacio privado y seguro.</p>
+      </div>
+      <form class="login-card" [formGroup]="loginForm" (ngSubmit)="login()">
+        <p class="eyebrow">ACCESO PRIVADO</p>
+        <h2>Panel administrativo</h2>
+        <p>Ingresa con la cuenta autorizada en Supabase.</p>
+        @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+        <label for="admin-email">Correo electrónico</label>
+        <input id="admin-email" type="email" formControlName="email" autocomplete="email" placeholder="admin@correo.com">
+        <label for="admin-password">Contraseña</label>
+        <input id="admin-password" type="password" formControlName="password" autocomplete="current-password" placeholder="••••••••">
+        <button type="submit" [disabled]="busy()">{{ busy() ? 'Ingresando…' : 'Ingresar al panel' }}</button>
+        <small>🔒 El acceso se valida en el servidor, no sólo en esta pantalla.</small>
+      </form>
+    </section>
+  } @else {
+    <header class="admin-header">
+      <a href="/" class="admin-brand"><span>♥</span><b>Invitación</b></a>
+      <div><span class="live-dot"></span> Evento activo <button type="button" (click)="logout()">Cerrar sesión</button></div>
+    </header>
+    <div class="dashboard">
+      <section class="dashboard-heading">
+        <div><p class="eyebrow">PANEL DE CONTROL</p><h1>Resumen del evento</h1><p>Viernes 06 de noviembre de 2026 · 1:00 p. m.</p></div>
+        <a href="/" target="_blank" rel="noopener">Ver invitación ↗</a>
+      </section>
+      @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+      @if (stats(); as value) {
+        <section class="stats-grid" aria-label="Estadísticas">
+          <article><span>✉</span><div><small>INVITACIONES</small><strong>{{ value.invitations }}</strong><p>{{ value.responded }} respondidas</p></div></article>
+          <article><span>✓</span><div><small>CONFIRMADAS</small><strong>{{ value.attending }}</strong><p>{{ value.totalPeople }} asistentes totales</p></div></article>
+          <article><span>×</span><div><small>NO ASISTIRÁN</small><strong>{{ value.declined }}</strong><p>Respuestas recibidas</p></div></article>
+          <article><span>…</span><div><small>PENDIENTES</small><strong>{{ value.pending }}</strong><p>Sin respuesta aún</p></div></article>
+        </section>
+      }
+
+      <section class="management-grid">
+        <article class="panel guest-panel">
+          <div class="panel-heading"><div><h2>Lista de invitados</h2><p>Respuestas y acompañantes</p></div><button type="button" (click)="exportCsv()">Exportar CSV</button></div>
+          <div class="filters">
+            <input type="search" placeholder="Buscar invitado…" (input)="updateSearch($event)" aria-label="Buscar invitado">
+            <select (change)="updateFilter($event)" aria-label="Filtrar por estado"><option value="all">Todos</option><option value="attending">Asistirán</option><option value="declined">No asistirán</option><option value="pending">Pendientes</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Invitación</th><th>Respuesta</th><th>Acomp.</th><th>Actualización</th><th></th></tr></thead>
+              <tbody>
+                @for (invitation of filteredInvitations; track invitation.id) {
+                  <tr>
+                    <td><strong>{{ invitation.rsvp?.name || invitation.label || 'Sin nombre' }}</strong><small>{{ invitation.kind }}</small></td>
+                    <td><span class="status" [class.attending]="invitation.rsvp?.attending" [class.declined]="invitation.rsvp && !invitation.rsvp.attending">{{ invitation.rsvp ? (invitation.rsvp.attending ? 'Asistirá' : 'No asistirá') : 'Pendiente' }}</span></td>
+                    <td>{{ invitation.rsvp?.companions ?? '—' }}</td>
+                    <td>{{ invitation.rsvp?.updatedAt ? (invitation.rsvp.updatedAt | date:'dd/MM/yy, HH:mm') : '—' }}</td>
+                    <td><button class="delete-button" type="button" (click)="removeInvitation(invitation)" aria-label="Eliminar invitación">×</button></td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="5" class="empty">No hay invitaciones que coincidan.</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <aside class="panel create-panel">
+          <p class="eyebrow">NUEVO ENLACE</p><h2>Crear invitación</h2><p>Genera un enlace individual o familiar imposible de predecir.</p>
+          <form [formGroup]="inviteForm" (ngSubmit)="createInvitation()">
+            <label for="invite-label">Nombre o familia</label><input id="invite-label" formControlName="label" placeholder="Ej. Familia Pérez">
+            <label for="invite-kind">Tipo</label><select id="invite-kind" formControlName="kind"><option value="individual">Individual</option><option value="family">Familiar</option></select>
+            <label for="invite-max">Máximo de acompañantes</label><input id="invite-max" type="number" min="0" max="10" formControlName="maxCompanions">
+            <button type="submit" [disabled]="busy()">{{ busy() ? 'Creando…' : '+ Crear enlace personalizado' }}</button>
+          </form>
+          @if (createdLink()) {
+            <div class="created-link"><strong>Enlace creado</strong><p>{{ createdLink() }}</p><div><button type="button" (click)="copyLink()">Copiar</button><a [href]="whatsappShareLink(createdLink())" target="_blank" rel="noopener">WhatsApp</a></div></div>
+          }
+        </aside>
+      </section>
+    </div>
+  }
+</main>

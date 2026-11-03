@@ -1,0 +1,9 @@
+/.angular
+/dist
+/node_modules
+/playwright-report
+/test-results
+/.env.local
+/src/environments/environment.generated.ts
+/.DS_Store
+*.log
