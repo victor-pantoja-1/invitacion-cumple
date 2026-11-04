@@ -2,7 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 const event = {
   id: '11111111-1111-4111-8111-111111111111', title: 'Cumpleaños', celebrantName: null,
-  startsAt: '2026-11-07T10:00:00-05:00', timezone: 'America/Lima',
+  startsAt: '2026-11-08T10:00:00-05:00', timezone: 'America/Lima',
   address: 'Casa de Campo - Campiña de Moche',
   mapsUrl: 'https://maps.app.goo.gl/GJUhJmogusQeqKe96',
   photoUrl: '/assets/images/cumpleanera.webp', musicUrl: '/assets/audio/cancion.mp3', maxGuests: 6, rsvpOpen: true,
@@ -33,7 +33,7 @@ test('opens the envelope and lets the visitor skip to event details', async ({ p
   await expect(page.getByRole('heading', { name: /La vida está llena/ })).toBeVisible();
   await page.getByRole('button', { name: 'Saltar historia' }).click();
   await expect(page.getByRole('heading', { name: /Nos vemos/ })).toBeVisible();
-  await expect(page.getByText('Sábado, 07 de noviembre')).toBeVisible();
+  await expect(page.getByText('Domingo, 08 de noviembre')).toBeVisible();
   await expect(page.getByText('10:00 a. m.')).toBeVisible();
   await expect(page.getByText('Hora de Perú')).toBeVisible();
   await expect(page.getByText('Campiña de Moche · Trujillo')).toBeVisible();
