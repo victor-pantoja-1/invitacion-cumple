@@ -39,7 +39,7 @@ export class InvitationComponent implements OnInit {
   readonly rsvpForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     attending: [true, Validators.required],
-    companions: [0, [Validators.required, Validators.min(0), Validators.max(4)]],
+    companions: [0, [Validators.required, Validators.min(0), Validators.max(6)]],
   });
 
   private token = '';
@@ -94,12 +94,15 @@ export class InvitationComponent implements OnInit {
 
   openInvitation(): void {
     if (this.opened()) return;
+    this.startMusic();
     this.opened.set(true);
     window.setTimeout(() => this.goTo(1), 850);
   }
 
   goTo(index: number): void {
-    this.scene.set(Math.max(0, Math.min(index, 5)));
+    const nextScene = Math.max(0, Math.min(index, 5));
+    if (nextScene === 0) this.opened.set(false);
+    this.scene.set(nextScene);
     this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -196,40 +199,18 @@ export class InvitationComponent implements OnInit {
     URL.revokeObjectURL(url);
   }
 
-  async share(): Promise<void> {
-    const data = {
-      title: 'Una invitación muy especial',
-      text: 'Hay momentos que merecen celebrarse…',
-      url: window.location.href,
-    };
-    try {
-      if (navigator.share) await navigator.share(data);
-      else {
-        await navigator.clipboard.writeText(data.url);
-        this.notice.set('Enlace copiado. Ya puedes compartirlo por WhatsApp.');
-      }
-    } catch {
-      // The visitor can cancel the native share sheet without showing an error.
-    }
-  }
-
   toggleMusic(): void {
-    const url = this.event().musicUrl;
-    if (!url) return;
-    if (!this.audio) {
-      this.audio = new Audio(url);
-      this.audio.loop = true;
-      this.audio.preload = 'none';
-    }
+    const audio = this.ensureAudio();
+    if (!audio) return;
     if (this.musicPlaying()) {
-      this.audio.pause();
+      audio.pause();
       this.musicPlaying.set(false);
-      localStorage.setItem('birthday-music', 'off');
+      this.saveMusicPreference('off');
     } else {
-      void this.audio.play().then(() => {
+      void audio.play().then(() => {
         this.musicPlaying.set(true);
-        localStorage.setItem('birthday-music', 'on');
-      });
+        this.saveMusicPreference('on');
+      }).catch(() => undefined);
     }
   }
 
@@ -244,6 +225,30 @@ export class InvitationComponent implements OnInit {
 
   trackPetal(index: number): number {
     return index;
+  }
+
+  private startMusic(): void {
+    const audio = this.ensureAudio();
+    if (!audio || this.musicPlaying()) return;
+    void audio.play().then(() => {
+      this.musicPlaying.set(true);
+      this.saveMusicPreference('on');
+    }).catch(() => undefined);
+  }
+
+  private ensureAudio(): HTMLAudioElement | null {
+    const url = this.event().musicUrl;
+    if (!url) return null;
+    if (!this.audio) {
+      this.audio = new Audio(url);
+      this.audio.loop = true;
+      this.audio.preload = 'none';
+    }
+    return this.audio;
+  }
+
+  private saveMusicPreference(value: 'on' | 'off'): void {
+    try { localStorage.setItem('birthday-music', value); } catch { /* Storage can be unavailable in private mode. */ }
   }
 
   private updateCountdown(): void {

@@ -86,7 +86,7 @@ Las rutas SPA (`/i/:token` y `/admin`) ya tienen rewrite a `index.html`.
 - Valores de respaldo frontend: `src/app/config/event.config.ts`.
 - Valores persistentes: registro de `public.events` en Supabase.
 - Fotografía: reemplaza `public/assets/images/cumpleanera.webp` conservando el nombre.
-- Música: establece `music_url` en `events`. Si está vacía, el control no aparece.
+- Música: coloca tu archivo MP3 en `public/assets/audio/cancion.mp3`. La reproducción empieza al pulsar **Abrir invitación** y el visitante puede pausarla desde el control musical.
 - Nombre y edad se mantienen opcionales, tal como se solicitó.
 
 ## Seguridad y privacidad

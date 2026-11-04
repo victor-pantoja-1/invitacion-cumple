@@ -2,10 +2,10 @@ import { expect, Page, test } from '@playwright/test';
 
 const event = {
   id: '11111111-1111-4111-8111-111111111111', title: 'Cumpleaños', celebrantName: null,
-  startsAt: '2026-11-06T13:00:00-05:00', timezone: 'America/Lima',
-  address: 'Mz. L, lote 5, Urb. Villa Santa María, Trujillo, Perú',
-  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Trujillo',
-  photoUrl: '/assets/images/cumpleanera.webp', musicUrl: null, maxGuests: 4, rsvpOpen: true,
+  startsAt: '2026-11-06T10:00:00-05:00', timezone: 'America/Lima',
+  address: 'Casa de Campo - Campiña de Moche',
+  mapsUrl: 'https://maps.app.goo.gl/GJUhJmogusQeqKe96',
+  photoUrl: '/assets/images/cumpleanera.webp', musicUrl: '/assets/audio/cancion.mp3', maxGuests: 6, rsvpOpen: true,
   narrative: {
     opening: 'Hay momentos que merecen celebrarse…',
     openingDetail: 'Y nada me haría más feliz que compartir este día tan especial contigo.',
@@ -28,12 +28,27 @@ test.beforeEach(async ({ page }) => mockApi(page));
 test('opens the envelope and lets the visitor skip to event details', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Hay momentos/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Compartir invitación' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Abrir invitación' }).click();
   await expect(page.getByRole('heading', { name: /La vida está llena/ })).toBeVisible();
   await page.getByRole('button', { name: 'Saltar historia' }).click();
   await expect(page.getByRole('heading', { name: /Nos vemos/ })).toBeVisible();
   await expect(page.getByText('Viernes, 06 de noviembre')).toBeVisible();
-  await expect(page.getByText('1:00 p. m.')).toBeVisible();
+  await expect(page.getByText('10:00 a. m.')).toBeVisible();
+  await expect(page.getByText('Campiña de Moche · Trujillo')).toBeVisible();
+});
+
+test('resets the envelope and exposes up to six companions', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Abrir invitación' }).click();
+  await expect(page.getByRole('heading', { name: /La vida está llena/ })).toBeVisible();
+  await page.getByRole('button', { name: /Atrás/ }).click();
+  await expect(page.getByRole('button', { name: 'Abrir invitación' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Ver detalles' }).click();
+  await page.getByRole('button', { name: /Confirmar asistencia/ }).click();
+  await expect(page.getByLabel('Número de acompañantes').locator('option')).toHaveCount(7);
+  await page.getByLabel('Número de acompañantes').selectOption({ label: '6' });
+  await expect(page.getByLabel('Número de acompañantes').locator('option:checked')).toHaveText('6');
 });
 
 test('validates and saves a positive RSVP only after the server responds', async ({ page }) => {

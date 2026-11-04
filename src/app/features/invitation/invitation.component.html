@@ -16,7 +16,6 @@
           {{ musicPlaying() ? '♫' : '♪' }}
         </button>
       }
-      <button type="button" class="round-action" (click)="share()" aria-label="Compartir invitación">↗</button>
     </div>
   </header>
 
@@ -126,8 +125,8 @@
           <h1 id="details-title">¡Nos vemos en mi <em>Cumpleaños!</em></h1>
           <div class="detail-grid">
             <article class="detail-card"><span class="detail-icon">▣</span><div><small>FECHA</small><strong>Viernes, 06 de noviembre</strong><p>de 2026</p></div></article>
-            <article class="detail-card"><span class="detail-icon">◷</span><div><small>HORA</small><strong>1:00 p. m.</strong><p>Hora de Lima</p></div></article>
-            <article class="detail-card location-card"><span class="detail-icon">⌖</span><div><small>DIRECCIÓN</small><strong>Urb. Villa Santa María</strong><p>Mz. L, lote 5 · Trujillo, Perú</p></div><button type="button" (click)="openMap()">Cómo llegar ↗</button></article>
+            <article class="detail-card"><span class="detail-icon">◷</span><div><small>HORA</small><strong>10:00 a. m.</strong><p>Hora de Lima</p></div></article>
+            <article class="detail-card location-card"><span class="detail-icon">⌖</span><div><small>LUGAR</small><strong>Casa de Campo</strong><p>Campiña de Moche · Trujillo</p></div><button type="button" (click)="openMap()">Cómo llegar ↗</button></article>
           </div>
           <div class="countdown-card" aria-live="polite">
             @if (!countdown().finished) {
@@ -184,7 +183,7 @@
                 @if (rsvpForm.controls.attending.value) {
                   <label class="field-label" for="companions">Número de acompañantes</label>
                   <select id="companions" formControlName="companions">
-                    @for (number of [0, 1, 2, 3, 4]; track number) {
+                    @for (number of [0, 1, 2, 3, 4, 5, 6]; track number) {
                       @if (number <= event().maxGuests) { <option [ngValue]="number">{{ number }}</option> }
                     }
                   </select>
@@ -217,7 +216,7 @@
           }
           <article class="event-summary">
             <div><small>VIERNES</small><strong>06</strong><span>NOV · 2026</span></div>
-            <p><strong>1:00 p. m.</strong><span>Urb. Villa Santa María<br>Trujillo, Perú</span></p>
+            <p><strong>10:00 a. m.</strong><span>Casa de Campo<br>Campiña de Moche</span></p>
           </article>
           <div class="success-actions">
             <button class="primary-button" type="button" (click)="openMap()">Ver ubicación ↗</button>
