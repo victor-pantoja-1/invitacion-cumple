@@ -2,7 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 const event = {
   id: '11111111-1111-4111-8111-111111111111', title: 'Cumpleaños', celebrantName: null,
-  startsAt: '2026-11-06T10:00:00-05:00', timezone: 'America/Lima',
+  startsAt: '2026-11-07T10:00:00-05:00', timezone: 'America/Lima',
   address: 'Casa de Campo - Campiña de Moche',
   mapsUrl: 'https://maps.app.goo.gl/GJUhJmogusQeqKe96',
   photoUrl: '/assets/images/cumpleanera.webp', musicUrl: '/assets/audio/cancion.mp3', maxGuests: 6, rsvpOpen: true,
@@ -15,7 +15,7 @@ const event = {
 };
 
 async function mockApi(page: Page, returning = false) {
-  let saved = returning ? { name: 'María', attending: true, companions: 1, updatedAt: new Date().toISOString() } : null;
+  let saved = returning ? { name: 'María Fernanda Rodríguez', attending: true, companions: 1, updatedAt: new Date().toISOString() } : null;
   await page.route('**/functions/v1/invitation-api', async (route) => {
     const body = route.request().postDataJSON();
     if (body.action === 'save') saved = { name: body.name, attending: body.attending, companions: body.companions, updatedAt: new Date().toISOString() };
@@ -33,8 +33,9 @@ test('opens the envelope and lets the visitor skip to event details', async ({ p
   await expect(page.getByRole('heading', { name: /La vida está llena/ })).toBeVisible();
   await page.getByRole('button', { name: 'Saltar historia' }).click();
   await expect(page.getByRole('heading', { name: /Nos vemos/ })).toBeVisible();
-  await expect(page.getByText('Viernes, 06 de noviembre')).toBeVisible();
+  await expect(page.getByText('Sábado, 07 de noviembre')).toBeVisible();
   await expect(page.getByText('10:00 a. m.')).toBeVisible();
+  await expect(page.getByText('Hora de Perú')).toBeVisible();
   await expect(page.getByText('Campiña de Moche · Trujillo')).toBeVisible();
 });
 
@@ -68,9 +69,20 @@ test('restores a previous response and allows editing it', async ({ page }) => {
   await page.unroute('**/functions/v1/invitation-api');
   await mockApi(page, true);
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /Qué alegría, María/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Qué alegría, María Fernanda Rodríguez/ })).toBeVisible();
+  const confirmedName = page.locator('.success-scene h1 em');
+  const nameLayout = await confirmedName.evaluate((element) => {
+    const style = getComputedStyle(element);
+    const bounds = element.getBoundingClientRect();
+    return {
+      paddingLeft: Number.parseFloat(style.paddingLeft),
+      insideViewport: bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth,
+    };
+  });
+  expect(nameLayout.paddingLeft).toBeGreaterThan(0);
+  expect(nameLayout.insideViewport).toBe(true);
   await page.getByRole('button', { name: 'Modificar mi respuesta' }).click();
-  await expect(page.getByLabel('Nombre y apellido')).toHaveValue('María');
+  await expect(page.getByLabel('Nombre y apellido')).toHaveValue('María Fernanda Rodríguez');
 });
 
 test('rejects malformed personalized links without calling the backend', async ({ page }) => {

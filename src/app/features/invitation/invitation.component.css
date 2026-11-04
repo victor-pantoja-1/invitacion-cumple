@@ -138,6 +138,14 @@ fieldset { margin: 1rem 0; padding: 0; border: 0; }
 .success-seal { display: grid; place-items: center; width: 5rem; height: 5rem; border-radius: 50%; margin-bottom: 1.1rem; color: white; font-size: 2.2rem; background: linear-gradient(145deg, #c83d79, #8d164f); border: 4px double #f1c16c; box-shadow: 0 14px 32px rgba(152,29,89,.22); }
 .declined-seal { background: #f7e0e3; color: var(--wine); }
 .success-scene > h1 { font-size: clamp(2.2rem, 8vw, 4.5rem); }
+.success-scene > h1 em {
+  max-width: min(100%, 18ch);
+  margin: .04em auto 0;
+  padding: .14em .38em .22em;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
 .success-scene > p { max-width: 34rem; font: 500 1rem/1.6 'Playfair Display'; }
 .celebration { color: var(--gold); font-size: 1.6rem; margin-bottom: 1rem; }
 .people-pill { margin: .5rem 0 1rem; padding: .65rem 1rem; border-radius: 99px; color: var(--wine); background: rgba(255,255,255,.62); font-weight: 700; font-size: .78rem; }
@@ -195,6 +203,8 @@ fieldset { margin: 1rem 0; padding: 0; border: 0; }
   .detail-card { padding: .8rem; }
   .countdown-units strong { font-size: 1.1rem; }
   .rsvp-shell { padding: 1rem; }
+  .success-scene > h1 { width: 100%; font-size: 2rem; }
+  .success-scene > h1 em { padding: .18em .3em .26em; font-size: 1.3em; }
 }
 
 @media (max-width: 600px) {

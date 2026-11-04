@@ -194,7 +194,7 @@ export class InvitationComponent implements OnInit {
     const url = URL.createObjectURL(new Blob([content], { type: 'text/calendar;charset=utf-8' }));
     const anchor = this.document.createElement('a');
     anchor.href = url;
-    anchor.download = 'cumpleanos-06-noviembre-2026.ics';
+    anchor.download = 'cumpleanos-07-noviembre-2026.ics';
     anchor.click();
     URL.revokeObjectURL(url);
   }
